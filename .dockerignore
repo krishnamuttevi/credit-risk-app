@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.log
+*.pid
+*.seed
+*.pid.lock
+.env
+.env.*
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Testing
+tests/
+test_*.py
+*_test.py
+
+# Build
+build/
+dist/
+*.egg-info/

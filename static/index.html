@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Risk Assessment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .form-section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .success-animation {
+            animation: successBounce 0.5s ease-out;
+        }
+        @keyframes successBounce {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        select option {
+            background-color: #4c1d95;
+            color: white;
+        }
+        .input-focus:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #5a6cd4, #6a3d9a);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .checkbox-container input[type="checkbox"] {
+            accent-color: #667eea;
+        }
+        .checkbox-container label {
+            transition: color 0.2s ease;
+        }
+        .checkbox-container:hover label {
+            color: #e0e7ff;
+        }
+        .risk-low { color: #10b981; }
+        .risk-medium { color: #f59e0b; }
+        .risk-high { color: #ef4444; }
+        .result-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .result-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <div class="min-h-screen p-4">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-white mb-2">Credit Risk Assessment</h1>
+                <p class="text-gray-300">Get instant loan approval predictions powered by AI</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex justify-center mb-8">
+                <div class="glass-effect rounded-full p-1">
+                    <button onclick="switchTab('form')" id="formTab" class="px-6 py-3 rounded-full text-white font-medium transition-all duration-300 bg-white/20">
+                        Manual Entry
+                    </button>
+                    <button onclick="switchTab('upload')" id="uploadTab" class="px-6 py-3 rounded-full text-white font-medium transition-all duration-300">
+                        CSV Upload
+                    </button>
+                </div>
+            </div>
+
+            <!-- Manual Form Tab -->
+            <div id="formContent" class="form-section">
+                <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+                    <form id="creditForm" class="space-y-6">
+                        <!-- Personal Information -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Gender *</label>
+                                <select name="CODE_GENDER" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus">
+                                    <option value="" disabled selected>Select Gender</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Own Car *</label>
+                                <select name="FLAG_OWN_CAR" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="Y">Yes</option>
+                                    <option value="N">No</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Own Realty *</label>
+                                <select name="FLAG_OWN_REALTY" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="Y">Yes</option>
+                                    <option value="N">No</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Number of Children *</label>
+                                <input type="number" name="CNT_CHILDREN" min="0" max="20" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="0" value="0">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Annual Income ($) *</label>
+                                <input type="number" name="AMT_INCOME_TOTAL" min="0" step="1000" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="50000" value="50000">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Credit Amount ($) *</label>
+                                <input type="number" name="AMT_CREDIT" min="0" step="1000" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="100000" value="100000">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Loan Annuity ($) *</label>
+                                <input type="number" name="AMT_ANNUITY" min="0" step="100" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="5000" value="5000">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Goods Price ($) *</label>
+                                <input type="number" name="AMT_GOODS_PRICE" min="0" step="1000" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="90000" value="90000">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Income Type *</label>
+                                <select name="NAME_INCOME_TYPE" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus">
+                                    <option value="" disabled selected>Select Income Type</option>
+                                    <option value="Working">Working</option>
+                                    <option value="Commercial associate">Commercial associate</option>
+                                    <option value="Pensioner">Pensioner</option>
+                                    <option value="State servant">State servant</option>
+                                    <option value="Student">Student</option>
+                                    <option value="Businessman">Businessman</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Education Type *</label>
+                                <select name="NAME_EDUCATION_TYPE" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus">
+                                    <option value="" disabled selected>Select Education</option>
+                                    <option value="Secondary / secondary special">Secondary / secondary special</option>
+                                    <option value="Higher education">Higher education</option>
+                                    <option value="Incomplete higher">Incomplete higher</option>
+                                    <option value="Lower secondary">Lower secondary</option>
+                                    <option value="Academic degree">Academic degree</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Family Status *</label>
+                                <select name="NAME_FAMILY_STATUS" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus">
+                                    <option value="" disabled selected>Select Status</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Single / not married">Single / not married</option>
+                                    <option value="Civil marriage">Civil marriage</option>
+                                    <option value="Separated">Separated</option>
+                                    <option value="Widow">Widow</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Housing Type *</label>
+                                <select name="NAME_HOUSING_TYPE" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus">
+                                    <option value="" disabled selected>Select Housing</option>
+                                    <option value="House / apartment">House / apartment</option>
+                                    <option value="With parents">With parents</option>
+                                    <option value="Municipal apartment">Municipal apartment</option>
+                                    <option value="Rented apartment">Rented apartment</option>
+                                    <option value="Office apartment">Office apartment</option>
+                                    <option value="Co-op apartment">Co-op apartment</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Age (years) *</label>
+                                <input type="number" name="age" min="18" max="100" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="35" value="35">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Years Employed *</label>
+                                <input type="number" name="years_employed" min="0" max="50" step="0.1" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="5" value="5">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Region Population (relative) *</label>
+                                <input type="number" name="REGION_POPULATION_RELATIVE" min="0" max="1" step="0.001" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="0.018" value="0.018">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Application Day *</label>
+                                <select name="WEEKDAY_APPR_PROCESS_START" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus">
+                                    <option value="" disabled selected>Select Day</option>
+                                    <option value="MONDAY">Monday</option>
+                                    <option value="TUESDAY">Tuesday</option>
+                                    <option value="WEDNESDAY">Wednesday</option>
+                                    <option value="THURSDAY">Thursday</option>
+                                    <option value="FRIDAY">Friday</option>
+                                    <option value="SATURDAY">Saturday</option>
+                                    <option value="SUNDAY">Sunday</option>
+                                </select>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Application Hour *</label>
+                                <input type="number" name="HOUR_APPR_PROCESS_START" min="0" max="23" required class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="10" value="10">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Days Registration</label>
+                                <input type="number" name="DAYS_REGISTRATION" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="-4000" value="-4000">
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label class="block text-white font-medium">Days ID Publish</label>
+                                <input type="number" name="DAYS_ID_PUBLISH" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-400 input-focus" placeholder="-2000" value="-2000">
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="border-t border-white/20 pt-6">
+                            <h3 class="text-xl font-semibold text-white mb-4">Contact Information</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                                <div class="flex items-center space-x-2 checkbox-container">
+                                    <input type="checkbox" name="FLAG_MOBIL" value="1" checked class="w-4 h-4 rounded bg-white/10 border border-white/20">
+                                    <label class="text-white text-sm">Mobile</label>
+                                </div>
+                                <div class="flex items-center space-x-2 checkbox-container">
+                                    <input type="checkbox" name="FLAG_EMP_PHONE" value="1" checked class="w-4 h-4 rounded bg-white/10 border border-white/20">
+                                    <label class="text-white text-sm">Work Phone</label>
+                                </div>
+                                <div class="flex items-center space-x-2 checkbox-container">
+                                    <input type="checkbox" name="FLAG_WORK_PHONE" value="1" class="w-4 h-4 rounded bg-white/10 border border-white/20">
+                                    <label class="text-white text-sm">Work Phone Available</label>
+                                </div>
+                                <div class="flex items-center space-x-2 checkbox-container">
+                                    <input type="checkbox" name="FLAG_CONT_MOBILE" value="1" checked class="w-4 h-4 rounded bg-white/10 border border-white/20">
+                                    <label class="text-white text-sm">Contact Mobile</label>
+                                </div>
+                                <div class="flex items-center space-x-2 checkbox-container">
+                                    <input type="checkbox" name="FLAG_PHONE" value="1" class="w-4 h-4 rounded bg-white/10 border border-white/20">
+                                    <label class="text-white text-sm">Phone</label>
+                                </div>
+                                <div class="flex items-center space-x-2 checkbox-container">
+                                    <input type="checkbox" name="FLAG_EMAIL" value="1" class="w-4 h-4 rounded bg-white/10 border border-white/20">
+                                    <label class="text-white text-sm">Email</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-6">
+                            <button type="submit" class="w-full btn-gradient text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl">
+                                <span id="submitText">Assess Credit Risk</span>
+                                <div id="loadingSpinner" class="hidden inline-block ml-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- CSV Upload Tab -->
+            <div id="uploadContent" class="form-section hidden">
+                <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-2">Upload CSV File</h2>
+                        <p class="text-white/80">Upload a CSV file with customer data for batch processing</p>
+                    </div>
+                    
+                    <div class="border-2 border-dashed border-white/30 rounded-lg p-8 text-center">
+                        <input type="file" id="csvFile" accept=".csv" class="hidden">
+                        <div id="uploadArea" class="cursor-pointer" onclick="document.getElementById('csvFile').click()">
+                            <div class="text-white/60 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="mx-auto mb-4" viewBox="0 0 16 16">
+                                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                    <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                </svg>
+                                <p class="text-xl">Click to upload CSV file</p>
+                                <p class="text-sm mt-2">or drag and drop</p>
+                            </div>
+                        </div>
+                        <div id="fileInfo" class="hidden text-white mt-4">
+                            <div class="flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="mr-2" viewBox="0 0 16 16">
+                                    <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+                                    <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                                </svg>
+                                <span id="fileName"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="uploadButton" class="hidden w-full mt-6 bg-gradient-to-r from-green-500 to-blue-600 text-white font-bold py-4 px-8 rounded-lg hover:from-green-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        Process CSV File
+                    </button>
+                    
+                    <button id="downloadCSVButton" class="w-full mt-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white font-bold py-3 px-6 rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-lg">
+                        Download Sample CSV Template
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="hidden mt-8">
+                <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+                    <div id="singleResult" class="hidden">
+                        <div class="text-center mb-6">
+                            <div id="resultIcon" class="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-4xl success-animation"></div>
+                            <h2 id="resultTitle" class="text-3xl font-bold text-white mb-2"></h2>
+                            <p id="resultSubtitle" class="text-white/80"></p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="result-card">
+                                <div class="text-2xl font-bold text-white mb-2" id="probabilityValue"></div>
+                                <div class="text-white/80">Default Probability</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="text-2xl font-bold text-white mb-2" id="riskLevel"></div>
+                                <div class="text-white/80">Risk Level</div>
+                            </div>
+                            <div class="result-card">
+                                <div class="text-2xl font-bold text-white mb-2" id="confidenceScore"></div>
+                                <div class="text-white/80">Confidence Score</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 text-center">
+                            <button onclick="resetForm()" class="bg-white/20 hover:bg-white/30 text-white font-medium py-3 px-8 rounded-lg transition-all duration-300">
+                                New Assessment
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="batchResults" class="hidden">
+                        <h2 class="text-2xl font-bold text-white mb-6">Batch Processing Results</h2>
+                        <div class="overflow-x-auto rounded-lg">
+                            <table class="w-full text-white">
+                                <thead>
+                                    <tr class="bg-white/10">
+                                        <th class="text-left p-3">Row</th>
+                                        <th class="text-left p-3">Loan Status</th>
+                                        <th class="text-left p-3">Default Probability</th>
+                                        <th class="text-left p-3">Risk Level</th>
+                                        <th class="text-left p-3">Confidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batchResultsBody">
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-8 text-center">
+                            <button id="downloadResultsButton" class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-lg transition-all duration-300 mr-4">
+                                Download Results
+                            </button>
+                            <button onclick="resetForm()" class="bg-white/20 hover:bg-white/30 text-white font-medium py-3 px-8 rounded-lg transition-all duration-300">
+                                New Upload
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Section -->
+            <div id="errorSection" class="hidden mt-8">
+                <div class="glass-effect rounded-2xl p-8 shadow-2xl bg-red-500/20">
+                    <div class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="w-16 h-16 text-red-400 mx-auto mb-4" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                        <h2 class="text-2xl font-bold text-red-400 mb-2">Error</h2>
+                        <p id="errorMessage" class="text-white/80 mb-6"></p>
+                        <button onclick="hideError()" class="mt-4 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-all duration-300">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Base URL - Change this to your FastAPI server URL
+        const API_BASE_URL = 'http://localhost:8000';
+        
+        // Store batch results for download
+        let batchResultsData = [];
+
+        // Tab switching functionality
+        function switchTab(tab) {
+            const formTab = document.getElementById('formTab');
+            const uploadTab = document.getElementById('uploadTab');
+            const formContent = document.getElementById('formContent');
+            const uploadContent = document.getElementById('uploadContent');
+            const resultsSection = document.getElementById('resultsSection');
+            const errorSection = document.getElementById('errorSection');
+
+            // Hide results and errors when switching tabs
+            resultsSection.classList.add('hidden');
+            errorSection.classList.add('hidden');
+
+            if (tab === 'form') {
+                formTab.classList.add('bg-white/20');
+                uploadTab.classList.remove('bg-white/20');
+                formContent.classList.remove('hidden');
+                uploadContent.classList.add('hidden');
+            } else {
+                uploadTab.classList.add('bg-white/20');
+                formTab.classList.remove('bg-white/20');
+                uploadContent.classList.remove('hidden');
+                formContent.classList.add('hidden');
+            }
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('creditForm').reset();
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('errorSection').classList.add('hidden');
+            document.getElementById('csvFile').value = '';
+            document.getElementById('fileInfo').classList.add('hidden');
+            document.getElementById('uploadButton').classList.add('hidden');
+        }
+
+        // Hide error
+        function hideError() {
+            document.getElementById('errorSection').classList.add('hidden');
+        }
+
+        // Show error
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorSection').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            
+            // Scroll to error
+            document.getElementById('errorSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Form submission handling
+        document.getElementById('creditForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            // Show loading state
+            submitText.textContent = 'Processing...';
+            loadingSpinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            try {
+                const formData = new FormData(e.target);
+                const data = {};
+                
+                // Convert form data to proper format
+                for (let [key, value] of formData.entries()) {
+                    if (value === '') continue;
+                    
+                    // Handle checkboxes
+                    if (key.startsWith('FLAG_')) {
+                        data[key] = value === '1' ? 1 : 0;
+                    } else if (key === 'age') {
+                        // Convert age to DAYS_BIRTH (negative days)
+                        data['DAYS_BIRTH'] = -parseInt(value) * 365;
+                    } else if (key === 'years_employed') {
+                        // Convert years to DAYS_EMPLOYED (negative days)
+                        data['DAYS_EMPLOYED'] = -parseFloat(value) * 365;
+                    } else if (['CNT_CHILDREN', 'HOUR_APPR_PROCESS_START', 'DAYS_REGISTRATION', 'DAYS_ID_PUBLISH'].includes(key)) {
+                        data[key] = parseInt(value);
+                    } else if (['AMT_INCOME_TOTAL', 'AMT_CREDIT', 'AMT_ANNUITY', 'AMT_GOODS_PRICE', 'REGION_POPULATION_RELATIVE'].includes(key)) {
+                        data[key] = parseFloat(value);
+                    } else {
+                        data[key] = value;
+                    }
+                }
+
+                // Set default values for other required fields
+                data['NAME_TYPE_SUITE'] = data['NAME_TYPE_SUITE'] || 'Unaccompanied';
+                data['OCCUPATION_TYPE'] = data['OCCUPATION_TYPE'] || null;
+                data['EXT_SOURCE_1'] = data['EXT_SOURCE_1'] || null;
+                data['EXT_SOURCE_2'] = data['EXT_SOURCE_2'] || null;
+                data['EXT_SOURCE_3'] = data['EXT_SOURCE_3'] || null;
+
+                console.log('Sending data to server:', data);
+
+                // Simulate API response for demonstration
+                // In a real implementation, this would be replaced with actual API call
+                setTimeout(() => {
+                    // Mock response
+                    const mockResponse = {
+                        loan_approved: Math.random() > 0.5,
+                        default_probability: Math.random(),
+                        risk_level: ['Low Risk', 'Medium Risk', 'High Risk'][Math.floor(Math.random() * 3)],
+                        confidence_score: Math.random()
+                    };
+                    
+                    // Process the mock response
+                    processResponse(mockResponse);
+                    
+                    // Reset loading state
+                    submitText.textContent = 'Assess Credit Risk';
+                    loadingSpinner.classList.add('hidden');
+                    submitBtn.disabled = false;
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Failed to process request. Please check if the server is running.');
+                
+                // Reset loading state
+                submitText.textContent = 'Assess Credit Risk';
+                loadingSpinner.classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Process API response
+        function processResponse(result) {
+            console.log('Received response from server:', result);
+            displaySingleResult(result);
+        }
+
+        // Display single result
+        function displaySingleResult(result) {
+            const resultsSection = document.getElementById('resultsSection');
+            const singleResult = document.getElementById('singleResult');
+            const batchResults = document.getElementById('batchResults');
+            
+            // Hide batch results, show single result
+            batchResults.classList.add('hidden');
+            singleResult.classList.remove('hidden');
+            resultsSection.classList.remove('hidden');
+
+            // Update result display
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultSubtitle = document.getElementById('resultSubtitle');
+            
+            if (result.loan_approved) {
+                resultIcon.className = 'w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-4xl success-animation bg-green-500';
+                resultIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="white" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/></svg>';
+                resultTitle.textContent = 'Loan Approved! ✅';
+                resultTitle.className = 'text-3xl font-bold text-green-400 mb-2';
+                resultSubtitle.textContent = 'Congratulations! Your loan application is likely to be approved.';
+            } else {
+                resultIcon.className = 'w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-4xl success-animation bg-red-500';
+                resultIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="white" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/></svg>';
+                resultTitle.textContent = 'Loan Denied ❌';
+                resultTitle.className = 'text-3xl font-bold text-red-400 mb-2';
+                resultSubtitle.textContent = 'Unfortunately, your loan application may be rejected.';
+            }
+
+            // Update metrics
+            document.getElementById('probabilityValue').textContent = (result.default_probability * 100).toFixed(1) + '%';
+            document.getElementById('riskLevel').textContent = result.risk_level;
+            document.getElementById('confidenceScore').textContent = (result.confidence_score * 100).toFixed(1) + '%';
+
+            // Color code risk level
+            const riskElement = document.getElementById('riskLevel');
+            if (result.risk_level === 'Low Risk') {
+                riskElement.className = 'text-2xl font-bold text-green-400 mb-2 risk-low';
+            } else if (result.risk_level === 'Medium Risk') {
+                riskElement.className = 'text-2xl font-bold text-yellow-400 mb-2 risk-medium';
+            } else {
+                riskElement.className = 'text-2xl font-bold text-red-400 mb-2 risk-high';
+            }
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // CSV file handling
+        document.getElementById('csvFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('fileInfo').classList.remove('hidden');
+                document.getElementById('fileName').textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                document.getElementById('uploadButton').classList.remove('hidden');
+            }
+        });
+
+        // CSV upload processing
+        document.getElementById('uploadButton').addEventListener('click', async () => {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showError('Please select a CSV file first');
+                return;
+            }
+
+            const uploadButton = document.getElementById('uploadButton');
+            uploadButton.textContent = 'Processing...';
+            uploadButton.disabled = true;
+
+            try {
+                // Simulate batch processing
+                setTimeout(() => {
+                    // Generate mock results
+                    const mockResults = [];
+                    for (let i = 0; i < 8; i++) {
+                        mockResults.push({
+                            row_index: i,
+                            loan_approved: Math.random() > 0.5,
+                            default_probability: Math.random(),
+                            risk_level: ['Low Risk', 'Medium Risk', 'High Risk'][Math.floor(Math.random() * 3)],
+                            confidence_score: Math.random()
+                        });
+                    }
+                    
+                    // Process the mock results
+                    batchResultsData = mockResults;
+                    displayBatchResults(mockResults);
+                    
+                    // Reset button
+                    uploadButton.textContent = 'Process CSV File';
+                    uploadButton.disabled = false;
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Failed to process CSV. Please check the file format.');
+                
+                // Reset button
+                uploadButton.textContent = 'Process CSV File';
+                uploadButton.disabled = false;
+            }
+        });
+
+        // Display batch results
+        function displayBatchResults(predictions) {
+            const resultsSection = document.getElementById('resultsSection');
+            const singleResult = document.getElementById('singleResult');
+            const batchResults = document.getElementById('batchResults');
+            const batchResultsBody = document.getElementById('batchResultsBody');
+            
+            // Hide single result, show batch results
+            singleResult.classList.add('hidden');
+            batchResults.classList.remove('hidden');
+            resultsSection.classList.remove('hidden');
+
+            // Clear previous results
+            batchResultsBody.innerHTML = '';
+
+            // Add each prediction result
+            predictions.forEach(prediction => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-white/10 hover:bg-white/5';
+                
+                const statusClass = prediction.loan_approved ? 'text-green-400' : 'text-red-400';
+                const statusText = prediction.loan_approved ? 'Approved' : 'Denied';
+                
+                let riskClass = 'text-white';
+                if (prediction.risk_level === 'Low Risk') riskClass = 'risk-low';
+                else if (prediction.risk_level === 'Medium Risk') riskClass = 'risk-medium';
+                else if (prediction.risk_level === 'High Risk') riskClass = 'risk-high';
+                
+                row.innerHTML = `
+                    <td class="p-3">${prediction.row_index + 1}</td>
+                    <td class="p-3 font-semibold ${statusClass}">${statusText}</td>
+                    <td class="p-3">${(prediction.default_probability * 100).toFixed(1)}%</td>
+                    <td class="p-3 font-medium ${riskClass}">${prediction.risk_level}</td>
+                    <td class="p-3">${(prediction.confidence_score * 100).toFixed(1)}%</td>
+                `;
+                
+                batchResultsBody.appendChild(row);
+            });
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Download results as CSV
+        document.getElementById('downloadResultsButton').addEventListener('click', () => {
+            if (batchResultsData.length === 0) return;
+            
+            let csv = 'Row,Loan Status,Default Probability,Risk Level,Confidence Score\n';
+            batchResultsData.forEach(result => {
+                const status = result.loan_approved ? 'Approved' : 'Denied';
+                csv += `${result.row_index + 1},${status},${(result.default_probability * 100).toFixed(1)}%,${result.risk_level},${(result.confidence_score * 100).toFixed(1)}%\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'credit_risk_results.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        // Download sample CSV template
+        document.getElementById('downloadCSVButton').addEventListener('click', () => {
+            const sampleCSV = `CODE_GENDER,FLAG_OWN_CAR,FLAG_OWN_REALTY,CNT_CHILDREN,AMT_INCOME_TOTAL,AMT_CREDIT,AMT_ANNUITY,AMT_GOODS_PRICE,NAME_INCOME_TYPE,NAME_EDUCATION_TYPE,NAME_FAMILY_STATUS,NAME_HOUSING_TYPE,age,years_employed,REGION_POPULATION_RELATIVE,WEEKDAY_APPR_PROCESS_START,HOUR_APPR_PROCESS_START,DAYS_REGISTRATION,DAYS_ID_PUBLISH,FLAG_MOBIL,FLAG_EMP_PHONE,FLAG_WORK_PHONE,FLAG_CONT_MOBILE,FLAG_PHONE,FLAG_EMAIL
+M,Y,Y,0,150000,500000,25000,450000,Working,Higher education,Married,House / apartment,35,5.5,0.018,MONDAY,10,-4000,-2000,1,1,0,1,0,1
+F,N,Y,2,200000,300000,15000,250000,Commercial associate,Secondary / secondary special,Single / not married,Rented apartment,42,8.2,0.025,TUESDAY,14,-5000,-1500,1,0,1,1,1,0`;
+            
+            const blob = new Blob([sampleCSV], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'credit_risk_template.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('bg-white/10');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('bg-white/10');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('bg-white/10');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'text/csv') {
+                document.getElementById('csvFile').files = files;
+                document.getElementById('csvFile').dispatchEvent(new Event('change'));
+            } else if (files.length > 0) {
+                showError('Please upload a CSV file');
+            }
+        });
+
+        // Initialize the form tab as active
+        switchTab('form');
+    </script>
+</body>
+</html>
