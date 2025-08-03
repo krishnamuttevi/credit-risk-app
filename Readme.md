@@ -2,6 +2,11 @@
 
 A FastAPI-based web application for predicting loan default risk using machine learning.
 
+## Live Demo 
+
+WEB : https://credit-risk-app-ea9v.onrender.com/
+
+
 ## Features
 
 - 🚀 **Real-time Predictions**: Get instant loan approval predictions
@@ -11,9 +16,6 @@ A FastAPI-based web application for predicting loan default risk using machine l
 - 🔄 **RESTful API**: Full API documentation with Swagger UI
 - 🐳 **Docker Support**: Easy deployment with containerization
 
-## Live Demo
-
-Visit: [https://your-app.onrender.com](https://your-app.onrender.com)
 
 ## API Documentation
 
